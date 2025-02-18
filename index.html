@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donate Bangladesh</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <header>
+        <button class="blog-btn">Blog</button>
+        <div class="logo">
+            <img src="images/logo.png" alt="Donate Bangladesh">
+            <span>Donate Bangladesh</span>
+        </div>
+        <div class="balance">
+            <span id="total-balance">5500</span> BDT
+        </div>
+    </header>
+
+    <div class="tabs">
+        <button class="active">Donation</button>
+        <button onclick="location.href='history.html'">History</button>
+    </div>
+
+    <div class="donation-container">
+        <!-- First Donation Card -->
+        <div class="donation-card">
+            <img src="images/noakhali.png" alt="Flood in Noakhali">
+            <div class="donation-info">
+                <span class="donation-amount">0</span> BDT
+                <h3>Donate for Flood at Noakhali, Bangladesh</h3>
+                <p>The recent floods in Noakhali have caused significant damage to homes and infrastructure. Your donation will provide essential supplies...</p>
+                <input type="number" class="donation-input" placeholder="Write Donation Amount">
+                <button class="donate-btn" onclick="donate(this, 'Flood at Noakhali')">Donate Now</button>
+            </div>
+        </div>
+
+        <!-- Second Donation Card -->
+        <div class="donation-card">
+            <img src="images/feni.png" alt="Flood in Feni">
+            <div class="donation-info">
+                <span class="donation-amount">600</span> BDT
+                <h3>Donate for Flood Relief in Feni, Bangladesh</h3>
+                <p>The recent floods in Feni have devastated local communities, leading to severe disruption and loss...</p>
+                <input type="number" class="donation-input" placeholder="Write Donation Amount">
+                <button class="donate-btn" onclick="donate(this, 'Flood Relief in Feni')">Donate Now</button>
+            </div>
+        </div>
+
+        <!-- Third Donation Card -->
+        <div class="donation-card">
+            <img src="images/quota-protest.png" alt="Quota Movement Injuries">
+            <div class="donation-info">
+                <span class="donation-amount">2400</span> BDT
+                <h3> Aid for Injured in the Quota Movement</h3>
+                <p>The recent Quota movement has resulted in numerous injuries and significant hardship for many individuals...</p>
+                <input type="number" class="donation-input" placeholder="Write Donation Amount">
+                <button class="donate-btn" onclick="donate(this, 'Aid for Injured in the Quota Movement')">Donate Now</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+      function donate() {
+    let amountInput = document.querySelector(".donation-input").value;
+
+    if (amountInput && amountInput > 0) {
+        // Show the confirmation popup
+        document.getElementById("confirmationPopup").style.display = "flex";
+
+        // Hide it after 4 seconds
+        setTimeout(() => {
+            document.getElementById("confirmationPopup").style.display = "none";
+        }, 4000);
+    } else {
+        alert("Please enter a valid donation amount!");
+    }
+}
+
+      document.addEventListener("DOMContentLoaded", function () {
+          // Load the stored balance and donation amounts
+          let totalBalanceField = document.getElementById("total-balance");
+          let savedBalance = localStorage.getItem("totalBalance");
+  
+          // Set total balance from localStorage or default value
+          totalBalanceField.innerText = savedBalance !== null ? savedBalance : "5500";
+  
+          // Load donation amounts from localStorage
+          document.querySelectorAll(".donation-card").forEach((card, index) => {
+              let savedAmount = localStorage.getItem(`donationAmount${index}`);
+              if (savedAmount !== null) {
+                  card.querySelector(".donation-amount").innerText = savedAmount;
+              }
+          });
+      });
+  
+      function donate(button, cause) {
+          let donationCard = button.parentElement;
+          let inputField = donationCard.querySelector(".donation-input");
+          let donationAmountField = donationCard.querySelector(".donation-amount");
+          let totalBalanceField = document.getElementById("total-balance");
+  
+          let donationValue = parseInt(inputField.value);
+          let currentDonation = parseInt(donationAmountField.innerText);
+          let totalBalance = parseInt(totalBalanceField.innerText);
+  
+          // Validate donation amount
+          if (isNaN(donationValue) || donationValue <= 0) {
+              alert("Please enter a valid donation amount!");
+              return;
+          }
+  
+          if (donationValue > totalBalance) {
+              alert("Insufficient balance!");
+              return;
+          }
+  
+          // Update donation amount
+          let newDonationAmount = currentDonation + donationValue;
+          donationAmountField.innerText = newDonationAmount;
+  
+          // Deduct from total balance
+          let newBalance = totalBalance - donationValue;
+          totalBalanceField.innerText = newBalance;
+  
+          // Store updated values in localStorage
+          localStorage.setItem("totalBalance", newBalance);
+          
+          // Find index of donation card
+          let cards = document.querySelectorAll(".donation-card");
+          let index = Array.from(cards).indexOf(donationCard);
+          localStorage.setItem(`donationAmount${index}`, newDonationAmount);
+  
+          // Store donation history in localStorage
+          let history = JSON.parse(localStorage.getItem("donationHistory")) || [];
+  
+          let now = new Date();
+          let options = { timeZone: "Asia/Dhaka", timeZoneName: "short" };
+          let formattedDate = now.toLocaleString("en-BD", options);
+  
+          history.push({
+              amount: donationValue,
+              cause: cause,
+              date: formattedDate
+          });
+  
+          localStorage.setItem("donationHistory", JSON.stringify(history));
+  
+          // Clear input field
+          inputField.value = "";
+      }
+  </script>
+  
+
+</body>
+</html>

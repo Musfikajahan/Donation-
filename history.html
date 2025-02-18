@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donation History</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <header>
+        <button class="blog-btn">Blog</button>
+        <div class="logo">
+            <img src="images/logo.png" alt="Donate Bangladesh">
+            <span>Donate Bangladesh</span>
+        </div>
+        <div class="balance">
+            <span id="total-balance">98600</span> BDT
+        </div>
+    </header>
+
+    <div class="tabs">
+        <button onclick="location.href='index.html'">Donation</button>
+        <button class="active">History</button>
+    </div>
+
+    <div class="history-container" id="history-container">
+        <!-- Donations will be dynamically loaded here -->
+    </div>
+
+    <script>
+        function loadHistory() {
+            let historyContainer = document.getElementById("history-container");
+            let history = JSON.parse(localStorage.getItem("donationHistory")) || [];
+    
+            historyContainer.innerHTML = "";
+    
+            if (history.length === 0) {
+                historyContainer.innerHTML = "<p>No donations recorded yet.</p>";
+                return;
+            }
+    
+            history.forEach(entry => {
+                let historyCard = document.createElement("div");
+                historyCard.classList.add("history-card");
+                historyCard.innerHTML = `
+                    <strong>${entry.amount} BDT Donated for ${entry.cause}</strong>
+                    <p>Date: ${entry.date}</p>
+                `;
+                historyContainer.appendChild(historyCard);
+            });
+    
+            // Load total balance from localStorage
+            let totalBalanceField = document.getElementById("total-balance");
+            let savedBalance = localStorage.getItem("totalBalance");
+            totalBalanceField.innerText = savedBalance !== null ? savedBalance : "98600";
+        }
+    
+        // Load donation history when page loads
+        window.onload = loadHistory;
+    </script>
+    
+
+</body>
+</html>
